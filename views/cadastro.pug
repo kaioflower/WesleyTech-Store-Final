@@ -5,14 +5,20 @@ block content
     .row.justify-content-center
       .col-md-6
         h2.text-center Cadastrar Produto
-        form(method='GET', action='/cadastro')
+        form(method='POST', action='/admin/cadastro/produto', enctype='multipart/form-data') 
           .form-group
             label(for='nome') Nome do Produto:
             input.form-control(type='text', id='nome', name='nome', placeholder='Digite o nome do produto', required)
           .form-group
-            label(for="descricao") Descrição:
-            input.form-control(type="number", id="preco", name="preco",placeholder='Digite a descrição do produto' required)
+            label(for='descricao') Descrição:
+            input.form-control(type='text', id='descricao', name='descricao', placeholder='Digite a descrição do produto', required)
           .form-group
-            label(for="preço") Preço:
-            input.form-control(type="text", id="preco", name="preco",placeholder='Digite o preço do produto' required)
+            label(for='preco') Preço:
+            input.form-control(type='text', id='preco', name='preco', placeholder='Digite o preço do produto', required)
+          .form-group
+            label(for='foto') Foto do Produto:
+            input.form-control(type='file', id='foto', name='foto',accept='image/*') 
+          .form-group
+            label(for='categoria') Categoria:
+            input.form-control(type='text', id='categoria', name='categoria', placeholder='Digite a categoria do produto', )
           button.btn.btn-primary.btn-block(type='submit') Cadastrar Produto

@@ -73,38 +73,20 @@ app.get("/", (req, res) => {
   res.render("login"); // Renderiza a página de login
 });
 
-// Registro de novo usuário no Firebase
-app.post("/register", (req, res) => {
-  const { email, password } = req.body;
-  admin
-    .auth()
-    .createUser({ email, password })
-    .then((userRecord) => {
-      console.log("Usuário criado com sucesso:", userRecord.uid);
-      res.send("Usuário registrado com sucesso");
-    })
-    .catch((error) => {
-      console.error("Erro ao criar usuário:", error);
-      res.status(500).send("Falha no registro do usuário");
-    });
-});
+
 
 app.post("/authenticated", async (req, res) => {
   const { email, password } = req.body;
   try {
-    // Fazer login com Firebase Authentication
     const userCredential = await autenticador.signInWithEmailAndPassword(auth, email, password);
     const user = userCredential.user;
-
-    // Obtém o token do usuário para verificar as claims
     const idToken = await user.getIdTokenResult();
 
-    // Armazena os dados do usuário e o token na sessão
     req.session.user = {
       uid: user.uid,
       email: user.email,
-      token: idToken.token, // Salva o token na sessão
-      isAdmin: idToken.claims.isAdmin || false, // Verifica se o usuário tem a claim de administrador
+      token: idToken.token,
+      isAdmin: idToken.claims.isAdmin || false, 
     };
     res.redirect("/home");
   } catch (error) {
@@ -133,11 +115,70 @@ const checkAdmin = async (req, res, next) => {
 };
 
 
+app.post("/admin/create", checkAuth, checkAdmin, async (req, res) => {
+  const { email, password } = req.body;
+
+  try {
+    const userRecord = await admin.auth().createUser({
+      email,
+      password,
+    });
+    await admin.auth().setCustomUserClaims(userRecord.uid, { isAdmin: true });
+    res.redirect('/home?msg=Usuário criado com sucesso!');
+  } catch (error) {
+    console.error("Erro ao criar novo administrador:", error);
+    res.status(500).send("Erro ao criar novo administrador.");
+  }
+});
+
 
 // Exibe o formulário para criar um novo administrador
 app.get("/admin/create", checkAuth, checkAdmin, (req, res) => {
   res.render("create-admin");
 });
+
+const multer = require('multer'); // Adicione isso se estiver usando multer
+
+// Configuração do Multer
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, './public/images'); // Altere para o diretório desejado
+  },
+  filename: (req, file, cb) => {
+    cb(null, Date.now() + path.extname(file.originalname)); // Adiciona um timestamp ao nome do arquivo
+  },
+});
+
+const upload = multer({ storage: storage });
+
+// Rota para cadastrar produto
+app.post("/admin/cadastro/produto", checkAuth, checkAdmin, upload.single('foto'), (req, res) => {
+  const { nome, descricao, preco, categoria } = req.body;
+
+  // Salva a URL da imagem
+  const imagemUrl = req.file ? `./images/${req.file.filename}` : '';
+
+  const novoProduto = {
+    id: produtos.length + 1,
+    nome,
+    descricao,
+    preco: parseFloat(preco),
+    categoria,
+    imagemUrl,
+    disponibilidade: 999,
+  };
+
+  produtos.push(novoProduto);
+  fs.writeFileSync(path.join(__dirname, "produtos.json"), JSON.stringify(produtos, null, 2));
+
+  res.redirect('/home?msg=Produto cadastrado com sucesso!');
+});
+
+// Rota para exibir o formulário de cadastro de produtos
+app.get("/admin/cadastro/produto", checkAuth, checkAdmin, (req, res) => {
+  res.render("cadastro", { user: req.session.user });
+});
+
 
 
 app.get("/admin", checkAdmin,checkAdmin, (req, res) => {
@@ -147,11 +188,11 @@ app.get("/admin", checkAdmin,checkAdmin, (req, res) => {
 // Logout
 app.get("/logout", (req, res) => {
   req.session.destroy();
-  res.send("Usuário deslogado com sucesso!");
+  res.render("login");
 });
 
 // Página inicial para usuários autenticados
-app.get("/home", checkAuth, checkAdmin, (req, res) => {
+app.get("/home", checkAuth, (req, res) => {
   res.render("home", {
     produtos,
     user: req.session.user,
@@ -160,7 +201,7 @@ app.get("/home", checkAuth, checkAdmin, (req, res) => {
 });
 
 
-app.get("/produto/:id", checkAuth, checkAdmin, (req, res) => {
+app.get("/produto/:id", checkAuth, (req, res) => {
   const id = parseInt(req.params.id); // Converte o ID para um número
   if (isNaN(id)) return res.status(400).send("ID inválido"); // Verifica se o ID é um número válido
 
@@ -188,6 +229,21 @@ app.get("/produto/:id/editar", checkAuth, (req, res) => {
       .send("Acesso negado: você não tem permissão para editar produtos.");
   }
 });
+
+app.get("/admin/excluir/produto/:id", checkAuth, checkAdmin, (req, res) => {
+  const produtoId = parseInt(req.params.id); // Pega o ID do produto a ser excluído
+  const index = produtos.findIndex(produto => produto.id === produtoId); // Localiza o índice do produto
+
+  if (index !== -1) {
+    produtos.splice(index, 1); // Remove o produto do array
+    fs.writeFileSync(path.join(__dirname, "produtos.json"), JSON.stringify(produtos, null, 2)); // Atualiza o JSON
+    res.redirect('/home?msg=Produto excluído com sucesso!'); // Redireciona após a exclusão
+  } else {
+    res.status(404).send("Produto não encontrado"); // Caso não encontre o produto
+  }
+});
+
+
 
 // Atualizar um produto (somente para administradores)
 app.post("/produto/:id/editar", checkAuth, (req, res) => {

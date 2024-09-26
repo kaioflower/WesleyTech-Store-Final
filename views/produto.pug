@@ -13,8 +13,10 @@ block content
         p Disponibilidade: #{produto.disponibilidade}
          // Botão de compra
         a.btn.btn-primary(href=`/compra/${produto.id}`) Comprar
-
+        a.btn.btn-primary.ml-3(href=`/home`) Voltar 
         // Botão de editar - Só visível para administradores
         if isAdmin
-          a.btn.btn-warning.ml-3(href=`/produto/${produto.id}/editar`) Editar
-        a.btn.btn-primary.ml-3(href=`/home`) Voltar
+            a.btn.btn-warning(href=`/admin/editar/produto/${produto.id}`) Editar
+            a.btn.btn-danger(href=`/admin/excluir/produto/${produto.id}`, onclick='return confirm("Tem certeza que deseja excluir este produto?");') Excluir
+
+        

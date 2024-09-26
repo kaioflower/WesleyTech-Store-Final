@@ -3,7 +3,7 @@ extends layout
 block content
   .container
     h1 Produtos Disponíveis
-    h3 Seja bem-vindes, #{user.name}
+    h3 Seja bem-vindes, #{user.email}
     .row
       if produtos.length
         each produto in produtos
