@@ -115,7 +115,7 @@ const checkAdmin = async (req, res, next) => {
 };
 
 
-app.post("/admin/create", checkAuth, checkAdmin, async (req, res) => {
+app.post("/admin/cadastroAdmin", checkAuth, checkAdmin, async (req, res) => {
   const { email, password } = req.body;
 
   try {
@@ -133,7 +133,7 @@ app.post("/admin/create", checkAuth, checkAdmin, async (req, res) => {
 
 
 // Exibe o formulário para criar um novo administrador
-app.get("/admin/create", checkAuth, checkAdmin, (req, res) => {
+app.get("/admin/cadastroAdmin", checkAuth, checkAdmin, (req, res) => {
   res.render("create-admin");
 });
 

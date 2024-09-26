@@ -6,7 +6,7 @@
     "preco": 99.99,
     "categoria": "Périférico",
     "imagemUrl": "./images/mouse.jpg",
-    "disponibilidade": 999
+    "disponibilidade": "999"
   },
   {
     "id": 3,
@@ -42,15 +42,6 @@
     "preco": 399.99,
     "categoria": "Escritorio",
     "imagemUrl": "images/impressora.jpg",
-    "disponibilidade": 999
-  },
-  {
-    "id": 8,
-    "nome": "teste",
-    "descricao": "teste",
-    "preco": 123,
-    "categoria": "teste",
-    "imagemUrl": "./images/1727349711750.png",
     "disponibilidade": 999
   }
 ]

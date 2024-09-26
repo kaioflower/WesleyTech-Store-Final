@@ -16,7 +16,7 @@ block content
         a.btn.btn-primary.ml-3(href=`/home`) Voltar 
         // Botão de editar - Só visível para administradores
         if isAdmin
-            a.btn.btn-warning(href=`/admin/editar/produto/${produto.id}`) Editar
+            a.btn.btn-warning(href=`/produto/${produto.id}/editar`) Editar
             a.btn.btn-danger(href=`/admin/excluir/produto/${produto.id}`, onclick='return confirm("Tem certeza que deseja excluir este produto?");') Excluir
 
         
