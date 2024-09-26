@@ -4,15 +4,31 @@ html(lang="pt-br")
     meta(charset="UTF-8")
     meta(name="viewport", content="width=device-width, initial-scale=1.0")
     title #{title} - WesleyTech Store
-    link(rel="stylesheet" href="https://cdn.jsdelivr.net/npm/purecss@3.0.0/build/pure-min.css" integrity="sha384-X38yfunGUhNzHpBaEBsWLO+A0HDYOQi8ufWDkZ0k9e0eXz/tH3II7uKZ9msv++Ls" crossorigin="anonymous")
-    link(rel="stylesheet" href="/style.css")
+    link(rel='stylesheet', href='https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css')
+    link(rel='stylesheet', href='./style.css')
   body
     header
-      h3 WesleyTech Store
-      
+      nav.navbar.navbar-expand-lg.navbar-light.bg-light
+        a.navbar-brand(href='/home') Home
+        button.navbar-toggler(type='button', data-toggle='collapse', data-target='#navbarNav', aria-controls='navbarNav', aria-expanded='false', aria-label='Toggle navigation')
+          span.navbar-toggler-icon
+        #navbarNav.collapse.navbar-collapse
+          ul.navbar-nav
+            if authToken
+              li.nav-item
+                a.nav-link(href=`/home?authToken=${authToken}`) Home
+              li.nav-item
+                a.nav-link(href=`/cadastro?authToken=${authToken}`) Cadastro
+            else
+              li.nav-item
+                a.nav-link(href='/cadastro') Login
+              
     main
       block content
     footer
-      .footer-content
-        p &copy; 2024 WesleyTech Store. Todos os direitos reservados.
+      .footer.bg-light.text-center.py-3
+        p &copy; 2024 WW Loja. Todos os direitos reservados.
+    script(src='https://code.jquery.com/jquery-3.5.1.slim.min.js')
+    script(src='https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js')
+    script(src='https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js')
     script(type="module" src="/js/script.js")

@@ -1,0 +1,19 @@
+extends layout
+
+block content
+  .container
+    h1 Confirmar Compra
+    .row
+      .col-md-6
+        img.img-fluid(src=`/${produto.imagemUrl}` || 'https://via.placeholder.com/600x400', alt=`Imagem de ${produto.nome}`)
+      .col-md-6
+        h2= produto.nome
+        p Preço: R$ #{produto.preco}
+        p Categoria: #{produto.categoria}
+        p Disponibilidade: #{produto.disponibilidade}
+        if user
+          p Comprador: #{user.name}
+          form(action=`/finalizar-compra/${produto.id}`, method="post")
+            button.btn.btn-success(type="submit") Finalizar Compra
+        else
+          p Para finalizar a compra, faça login!

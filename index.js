@@ -1,182 +1,198 @@
 const express = require("express");
-const crypto = require("crypto");
+const session = require("express-session");
+const admin = require("firebase-admin");
+const fs = require("fs");
+const path = require("path");
+
+const serviceAccount = require("./keys.json");
+
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount),
+});
+
 const app = express();
 
-app.use(eudxpress.static("./public")); //Define o local dos arquivos estáticos
-app.set("view engine", "pug"); //Define o motor de renderizacao das minhas paginas dinamicas
-app.set("views", "./views"); //Define o local onde estão as minhas páginas dinâmicas
+app.use(express.static(path.join(__dirname, "public")));
+app.set("view engine", "pug");
+app.set("views", path.join(__dirname, "views"));
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
-//Lista de usuários
-const users = [
-    {
-        uid: 1,
-        name: "Wellington Wagner",
-        email: "well@example.com",
-        password: "senha123",
-    },
-    {
-        uid: 2,
-        name: "Maria Clara",
-        email: "maria.clara@example.com",
-        password: "senha456",
-    },
-    {
-        uid: 3,
-        name: "João Gabriel",
-        email: "joao.gabriel@example.com",
-        password: "senha789",
-    },
-    {
-        uid: 4,
-        name: "Ana Luiza",
-        email: "ana.luiza@example.com",
-        password: "senha321",
-    },
-    {
-        uid: 5,
-        name: "Carlos Eduardo",
-        email: "carlos.eduardo@example.com",
-        password: "senha654",
-    },
-    {
-        uid: 6,
-        name: "Beatriz Santos",
-        email: "beatriz.santos@example.com",
-        password: "senha987",
-    },
-];
+app.use(
+  session({
+    secret: "super-secret-key",
+    resave: true,
+    saveUninitialized: true,
+  }),
+);
 
-let session = {};
+// Carregamento de dados do arquivo produtos.json
+const produtos = JSON.parse(
+  fs.readFileSync(path.join(__dirname, "produtos.json")),
+);
 
-// Função de autenticação
-function autenticador(email, password) {
-    let count;
-    let token;
+// Middleware para verificar se o usuário está autenticado
+const checkAuth = (req, res, next) => {
+  if (req.session.user) {
+    next();
+  } else {
+    res.status(401).send("Usuário Não Autorizado! Faça login.");
+  }
+};
 
-    for (count = 0; count < users.length; count++) {
-        if (
-            users[count].email === email &&
-            users[count].password === password
-        ) {
-            token = gerarToken(users[count]);
-            return { user: users[count], authToken: token };
-        }
-    }
-    return null;
-}
-
-// Função para gerar um token baseado nas informações do usuário
-function gerarToken(user) {
-    const tokenBase = `${user.uid}-${user.email}-${Date.now()}`;
-    return crypto.createHash("sha256").update(tokenBase).digest("hex"); //Cria um hash SHA-256 com o token base
-}
-
-// Middleware de autenticação
-function authMiddleware(req, res, next) {
-    const {authToken } = req.query;
-    
-    if (session.authToken === authToken) {
-        req.user = session.user;
-        console.log(session.user);
-        next();
-    } else {
-        console.log(session.user);
-        res.status(401).redirect("/");
-    }
-}
-
-//Rota principal: wwww.exemplo.br/
-app.get("/", (_, res) => {
-    res.render("login");
+// Rota inicial de login
+app.get("/", (req, res) => {
+  res.render("login"); // Renderiza a página de login
 });
 
-// Rota de autenticação
+// Registro de novo usuário no Firebase
+app.post("/register", (req, res) => {
+  const { email, password } = req.body;
+  admin
+    .auth()
+    .createUser({ email, password })
+    .then((userRecord) => {
+      console.log("Usuário criado com sucesso:", userRecord.uid);
+      res.send("Usuário registrado com sucesso");
+    })
+    .catch((error) => {
+      console.error("Erro ao criar usuário:", error);
+      res.status(500).send("Falha no registro do usuário");
+    });
+});
+
 app.post("/authenticated", (req, res) => {
-    const { email, password } = req.body;
-    const authResult = autenticador(email, password);
-    session = autenticador(email, password);
-
-    if (authResult) {
-        res.status(200).json({
-            message: "Login realizado com sucesso!",
-            authToken: authResult.authToken,
-        });
-        //res.redirect(`/home?token=${authResult.token}`);
-    } else {
-        res.status(401).json({ message: "Usuário ou senha inválidos" });
-    }
+  const { email, password } = req.body;
+  admin
+    .auth()
+    .getUserByEmail(email)
+    .then((userRecord) => {
+      if (password === "admin123") {
+        req.session.user = userRecord;
+        res.redirect("/home");
+      } else {
+        res.status(401).send("Usuário ou senha inválidos");
+      }
+    })
+    .catch((error) => {
+      console.error("Erro ao autenticar usuário:", error);
+      res.status(401).send("Usuário ou senha inválidos");
+    });
 });
 
-// Rota protegida - Home
-app.get("/home", authMiddleware, (req, res) => {
-    res.render("home", { produtos, user: session.user, authToken: session.authToken });
+// Logout
+app.get("/logout", (req, res) => {
+  req.session.destroy();
+  res.send("Usuário deslogado com sucesso!");
 });
 
-// Produtos para exibição
-
-const produtos = [
-    {
-        id: 1,
-        nome: "Notebook",
-        descricao:
-            "Notebook Dell Inspiron 15, com processador Intel i7, 16GB de RAM, 512GB SSD, tela Full HD de 15.6 polegadas.",
-        preco: 2999.99,
-    },
-    {
-        id: 2,
-        nome: "Mouse",
-        descricao:
-            "Mouse sem fio Logitech MX Master 3, ergonômico, com sensor de alta precisão e bateria recarregável.",
-        preco: 99.99,
-    },
-    {
-        id: 3,
-        nome: "Teclado",
-        descricao:
-            "Teclado mecânico sem fio Keychron K2, com switches Red, retroiluminação RGB, compatível com Windows e macOS.",
-        preco: 199.99,
-    },
-    {
-        id: 4,
-        nome: "Monitor",
-        descricao:
-            "Monitor LG UltraWide 34'', resolução 2560x1080, tecnologia IPS, ideal para multitarefa e edição de vídeo.",
-        preco: 1499.99,
-    },
-    {
-        id: 5,
-        nome: "Headset",
-        descricao:
-            "Headset Gamer HyperX Cloud II, som surround 7.1, microfone removível, estrutura em alumínio.",
-        preco: 499.99,
-    },
-    {
-        id: 6,
-        nome: "Impressora",
-        descricao:
-            "Impressora Multifuncional HP DeskJet 3776, com Wi-Fi, impressão, cópia e digitalização, compatível com smartphones e tablets.",
-        preco: 399.99,
-    },
-];
-
-// Rota protegida - Produtos
-app.get("/produtos", authMiddleware, (req, res) => {
-    res.render("produtos",{authToken: session.authToken, produtos});
+// Página inicial para usuários autenticados
+app.get("/home", checkAuth, (req, res) => {
+  res.render("home", {
+    produtos,
+    user: req.session.user,
+  });
 });
 
-// Rota protegida - Cadastro
-app.get("/cadastro", authMiddleware, (req, res) => {
-    res.render("cadastro",{authToken: session.authToken});
+// Exibir um produto
+app.get("/produto/:id", checkAuth, (req, res) => {
+  const id = parseInt(req.params.id); // Converte o ID para um número
+  if (isNaN(id)) return res.status(400).send("ID inválido"); // Verifica se o ID é um número válido
+
+  const produto = produtos.find((p) => p.id === id); // Busca o produto pelo ID
+  if (!produto) return res.status(404).send("Produto não encontrado");
+
+  res.render("produto", {
+    produto,
+    isAdmin: req.session.user.customClaims && req.session.user.customClaims.isAdmin,
+    user: req.session.user,
+  });
+});
+
+
+// Editar um produto (somente para administradores)
+app.get("/produto/:id/editar", checkAuth, (req, res) => {
+  if (req.session.user.customClaims && req.session.user.customClaims.isAdmin) {
+    const produto = produtos.find((p) => p.id === parseInt(req.params.id));
+    if (!produto) return res.status(404).send("Produto não encontrado");
+
+    res.render("editar-produto", { produto });
+  } else {
+    res
+      .status(403)
+      .send("Acesso negado: você não tem permissão para editar produtos.");
+  }
+});
+
+// Atualizar um produto (somente para administradores)
+app.post("/produto/:id/editar", checkAuth, (req, res) => {
+  if (req.session.user.customClaims && req.session.user.customClaims.isAdmin) {
+    const produto = produtos.find((p) => p.id === parseInt(req.params.id));
+    if (!produto) return res.status(404).send("Produto não encontrado");
+
+    produto.nome = req.body.nome;
+    produto.descricao = req.body.descricao;
+    produto.preco = parseFloat(req.body.preco);
+    produto.categoria = req.body.categoria;
+    produto.disponibilidade = req.body.disponibilidade;
+
+    fs.writeFileSync(
+      path.join(__dirname, "produtos.json"),
+      JSON.stringify(produtos, null, 2),
+    );
+
+    res.redirect(`/produto/${produto.id}`);
+  } else {
+    res
+      .status(403)
+      .send("Acesso negado: você não tem permissão para editar produtos.");
+  }
+});
+
+// Página de compra
+app.get("/compra/:id", checkAuth, (req, res) => {
+  const produto = produtos.find((p) => p.id === parseInt(req.params.id));
+  if (!produto) return res.status(404).send("Produto não encontrado");
+
+  res.render("compra", {
+    produto,
+    user: req.session.user,
+  });
+});
+
+// Finalizar compra
+app.post("/finalizar-compra/:id", checkAuth, (req, res) => {
+  const produto = produtos.find((p) => p.id === parseInt(req.params.id));
+  if (!produto) return res.status(404).send("Produto não encontrado");
+
+  if (produto.disponibilidade <= 0)
+    return res.status(400).send("Produto esgotado.");
+
+  produto.disponibilidade -= 1;
+
+  const compra = {
+    produto: produto.nome,
+    preco: produto.preco,
+    comprador: req.session.user.email,
+    data: new Date().toLocaleString(),
+  };
+
+  fs.writeFileSync(
+    path.join(__dirname, "produtos.json"),
+    JSON.stringify(produtos, null, 2),
+  );
+  console.log(`Compra realizada: ${JSON.stringify(compra)}`);
+
+  res.render("compra-finalizada", {
+    produto,
+    user: req.session.user,
+    compra,
+  });
 });
 
 // Iniciar o servidor
-const server = app.listen(3000, "0.0.0.0", () => {
-    const host = server.address().address;
-    const port = server.address().port;
-    console.log(
-        `Aplicação WesleyTech Store está rodando no endereço IP ${host} e na porta ${port}`,
-    );
+const port = process.env.PORT || 3000;
+app.listen(port, () => {
+  console.log(`Servidor rodando na porta ${port}`);
 });

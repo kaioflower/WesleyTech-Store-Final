@@ -1,0 +1,11 @@
+extends layout
+
+block content
+  .container
+    h1 Compra Finalizada
+    p Obrigado por comprar #{produto.nome}!
+    p Preço: R$ #{produto.preco}
+    p Categoria: #{produto.categoria}
+    p Comprador: #{compra.comprador}
+    p Data da compra: #{compra.data}
+    a.btn.btn-primary(href='/home') Voltar para a Home

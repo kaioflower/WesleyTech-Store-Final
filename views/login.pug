@@ -1,18 +1,41 @@
 extends layout
 
 block content
-  .content
-    h1 Bem-vindo à WesleyTech Store
-
-    // Seção de Login
-    .login-section
-      h2 Login
-      form.pure-form.pure-form-stacked(id="loginForm")
-        fieldset
-          label(for="email") Email:
-          input(type="email", id="email", name="email", required)
-          label(for="password") Senha:
-          input(type="password", id="password", name="password", required)
-          button.pure-button.pure-button-primary(id="submit") Entrar
+  .container
+    .row.justify-content-center
+      .col-md-6
+        h2.text-center Login
+        form(id="loginForm", method='POST', action='/authenticated')
+          .form-group
+            label(for='email') E-mail
+            input.form-control(type='email', id='email', name='email', placeholder='Digite seu e-mail', required)
+          .form-group
+            label(for='password') Senha
+            input.form-control(type='password', id='password', name='password', placeholder='Digite sua senha', required)
+          button.btn.btn-primary.btn-block(type='submit') Entrar
         p#login-message
-  script(type="module" src="/js/authentication.js")
+  script.
+    document.getElementById("loginForm").addEventListener("submit", function(event) {
+      // Não precisa de preventDefault aqui, o formulário será enviado normalmente
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
+
+      fetch('/authenticated', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password }),
+      })
+      .then(response => {
+        if (!response.ok) {
+          return response.text().then(message => {
+            document.getElementById('login-message').innerText = message; // Exibir mensagem de erro
+          });
+        }
+      })
+      .catch((error) => {
+        console.error('Erro ao fazer login:', error);
+        document.getElementById('login-message').innerText = "Erro ao tentar login.";
+      });
+    });

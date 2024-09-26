@@ -1,0 +1,58 @@
+[
+    {
+        "uid": 1,
+        "name": "Wellington Wagner",
+        "email": "well@example.com",
+        "password": "senha123",
+        "isAdmin": true
+    },
+    {
+        "uid": 2,
+        "name": "Maria Clara",
+        "email": "maria.clara@example.com",
+        "password": "senha456",
+        "isAdmin": true
+    },
+    {
+        "uid": 3,
+        "name": "João Gabriel",
+        "email": "joao.gabriel@example.com",
+        "password": "senha789",
+        "isAdmin": true
+    },
+    {
+        "uid": 4,
+        "name": "Ana Luiza",
+        "email": "ana.luiza@example.com",
+        "password": "senha321",
+        "isAdmin": true
+    },
+    {
+        "uid": 5,
+        "name": "Carlos Eduardo",
+        "email": "carlos.eduardo@example.com",
+        "password": "senha654",
+        "isAdmin": true
+    },
+    {
+        "uid": 6,
+        "name": "Beatriz Santos",
+        "email": "beatriz.santos@example.com",
+        "password": "senha987",
+        "isAdmin": true
+    },
+    {
+        "uid": 7,
+        "name": "TesteAdmin",
+        "email": "TesteAdmin@teste.com",
+        "password": "teste123",
+        "isAdmin": true
+    },
+    {
+        "uid": 8,
+        "name": "TesteCliente",
+        "email": "TesteCliente@teste.com",
+        "password": "teste123",
+        "isAdmin": false
+    }
+]

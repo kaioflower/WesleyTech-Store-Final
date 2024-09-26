@@ -1,14 +1,18 @@
-extends layout2
+extends layout
 
 block content
-  .content
-    h1 Cadastro de Produto
-    form.pure-form.pure-form-stacked(action="/cadastro-produto", method="POST")
-      fieldset
-        label(for="nome") Nome do Produto:
-        input(type="text", id="nome", name="nome", required)
-        label(for="descricao") Descrição:
-        input(type="text", id="descricao", name="descricao", required)
-        label(for="preco") Preço:
-        input(type="number", step="0.01", id="preco", name="preco", required)
-        button.pure-button.pure-button-primary(type="submit") Cadastrar Produto
+  .container
+    .row.justify-content-center
+      .col-md-6
+        h2.text-center Cadastrar Produto
+        form(method='GET', action='/cadastro')
+          .form-group
+            label(for='nome') Nome do Produto:
+            input.form-control(type='text', id='nome', name='nome', placeholder='Digite o nome do produto', required)
+          .form-group
+            label(for="descricao") Descrição:
+            input.form-control(type="number", id="preco", name="preco",placeholder='Digite a descrição do produto' required)
+          .form-group
+            label(for="preço") Preço:
+            input.form-control(type="text", id="preco", name="preco",placeholder='Digite o preço do produto' required)
+          button.btn.btn-primary.btn-block(type='submit') Cadastrar Produto

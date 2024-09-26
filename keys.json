@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "wesleytechstore-1452a",
+  "private_key_id": "6f80839b382b1b4c9c8ec900e63505fb6e996159",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQClub9rMbNh9pRF\ngymjMZ9d5ruo8NmSx3TtqOFSCKjruCRE0IqcjZ0lUenPX/SyAl1m3WEMWOgBHvNs\nad/ZTytgXoSn9oBqN0ZkCyS0AMX1xFeWwtVCuMM48pzqAclm+b/4Xa2GOjm9neNP\nJ0uj9qieWErOtBAQq8tfPmVQXziiL/yJsKOI8bzly5Y6DDuiYl+cnXUIYQjua5LN\nHf5ZNBsrGgj29Dor/iNJ8xWZ+LEKtot0cqYegR2mnCVn5DgZICZPtdfQkSJMWAuP\nm1IvmcfyOaVOLr7aZZoaxljP3F9vAfrRbNaIxfafEeWf+Hlg9VU9SyPQGZjfvxLc\nJ52722ajAgMBAAECggEAQIvAzwozeIMmKpC0RdhM3rDABEOSKgW/N9UftOikifJV\nRewHIIRTYTavHtKbpj0fjbHJW5rA+bbJTj9KLQQVu9n0RsrOJxBSPSLN78GhWGBZ\nUOGfV/ZIKsTrcoSxoYbCSwSJUg8ZcA2ve6OtZTXrZIi00h71ZtjSQ800foInt5ri\nMFoNQFGSnwcWvjy+gKotZ1dqotEakZKPS1iFaI1ibPXZO4DevM/mF+4ecu9RcYM7\n2YBgcD1ICmhE+LOCy6FoimJBMgq2ySUMwechzlzVqRuCFJEIwlowHA8h+2ohOXRc\n+ah4XsuG8prK6l7cdRlk96xCsERecK3RNMivTLtdoQKBgQDcAb5ScL2YuidQPihe\nUi4R7hCP0aTY94jLGyhwVPKTuyGy2PymFuCdBOffHir83pJhLOcfESlq8TU0MwHE\n53/VDm+Oen4laCay+JHUvGPF9wkg+tEKoeFtFbOO6fDhhRJHluFMgnqSlbEGDo9K\nh5SLCdmqk2UzalPs0bTbHA+aEQKBgQDA1p1Xf+Y0HHXKG5aM9Cr5tex8Uv2QpqEj\nmvlEoYI9JXLxlDj3tSC0aqbgBQ7XQcSSS/7tHW65BSw3ZHqrxKeqzzZiU5PoQymi\narAw+ycfuAqGEexUHYccHiobR/S7h0qctmdK7VUXfbY6aZtC7aizKawfLZHbqhw/\no8nieS0hcwKBgCsynHALeu61/mofCkYa1LjoiY/zle6UC+P1XSdRRqADKka3nEPw\nUgICqJSCk+Y6vXsfGfJbqEo7OjsZmMtUuSDYSMcs/f/SR2b0r42Zv+1q5/v1w33W\n8zA8BpmVDZr6SfCMi4g+Rlrp0WxjB3eWz2/Na1O2xTQnOHtTYbNz+wxBAoGBAIf2\nCSOLMsSlGEtyXhhtguti4CTb4pmdUlmnR36jHQ99muhHKE9F7pQl6hhimI8eeLjp\nSgjmSo263u0DNBZtZgXhaSe0Y8FLsUwpSqaOPYx4lzrl4imAVCV4AxoPBrc9cVbC\nqFtEsE0KvnO6x9RNejcv94JX/9HPw3D/SzUZWL+PAoGBAMIyX8gHEPZ+X9lmTN/b\nPolY7qtqvH/SFtuZWgRPQ9alQHQTauNKPIeskDxY0OTT77LdAaFTdnWly6ylk/sH\ntNcdRRjUkpFnR12xePE0BU8spVSTkc5UYO3fo62vgdhyppvqSHP7wj6hBCFV74/8\nNqPnVGsrsKm6iMYfT6x6NPrJ\n-----END PRIVATE KEY-----\n",
+  "client_email": "firebase-adminsdk-ydfx5@wesleytechstore-1452a.iam.gserviceaccount.com",
+  "client_id": "116347321406789219796",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/firebase-adminsdk-ydfx5%40wesleytechstore-1452a.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}

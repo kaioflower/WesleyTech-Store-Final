@@ -1,76 +1,20 @@
-@import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@300..700&display=swap');
-
-* {
-    box-sizing: border-box;
+html, body {
+  height: 100%;
+  margin: 0;
 }
 
 body {
-    line-height: 1.7em;
-    font-size: 1.1em;
-    margin: 0;
-    font-family: "Quicksand", sans-serif;
-    font-optical-sizing: auto;
-    font-weight: 400;
-    font-style: normal;
-}
-
-header, footer {
-    background: #afc9e4;
-    text-align: center;
-    padding: 1em 0;
-}
-
-.pure-menu-link {
-    color: #036794;
-}
-
-header .pure-menu, footer .footer-content {
-    max-width: 800px;
-    margin: auto;
-}
-
-header a, footer a {
-    text-decoration: none;
+  display: flex;
+  flex-direction: column;
 }
 
 main {
-    max-width: 800px;
-    margin: 2em auto;
-    padding: 0 1em;
+  flex: 1;
 }
 
-.pure-form input[type] {
-    border: 2px solid #ddd;
-    box-shadow: none;
-    font-size: 100%;
-    width: 100%;
-    margin-bottom: 1em;
-    padding: 0.5em;
-}
-
-.pure-button {
-    background-color: #1f8dd6;
-    color: white;
-    padding: 0.5em 2em;
-    border-radius: 5px;
-    text-decoration: none;
-}
-
-.pure-button-primary {
-    background: white;
-    color: #1f8dd6;
-    border-radius: 5px;
-    font-size: 100%;
-}
-
-.is-center {
-    text-align: center;
-}
-
-.content {
-    margin-top: 1em;
-}
-
-.error {
-    color: red;
+.footer {
+  flex-shrink: 0; 
+  background-color: #f8f9fa; 
+  text-align: center;
+  padding: 10px;
 }

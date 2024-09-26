@@ -1,0 +1,56 @@
+[
+  {
+    "id": 1,
+    "nome": "Notebook",
+    "descricao": "Notebook Dell Inspiron 15, com processador Intel i7, 16GB de RAM, 512GB SSD, tela Full HD de 15.6 polegadas.",
+    "preco": 2999.99,
+    "categoria": "Computador",
+    "imagemUrl": "images/notebook.jpg",
+    "disponibilidade": 997
+  },
+  {
+    "id": 2,
+    "nome": "Mouse",
+    "descricao": "Mouse sem fio Logitech MX Master 3, ergonômico, com sensor de alta precisão e bateria recarregável.",
+    "preco": 99.99,
+    "categoria": "Périférico",
+    "imagemUrl": "./images/mouse.jpg",
+    "disponibilidade": 999
+  },
+  {
+    "id": 3,
+    "nome": "Teclado",
+    "descricao": "Teclado mecânico sem fio Keychron K2, com switches Red, retroiluminação RGB, compatível com Windows e macOS.",
+    "preco": 199.99,
+    "categoria": "Périférico",
+    "imagemUrl": "./images/teclado.jpg",
+    "disponibilidade": 999
+  },
+  {
+    "id": 4,
+    "nome": "Monitor",
+    "descricao": "Monitor LG UltraWide 34'', resolução 2560x1080, tecnologia IPS, ideal para multitarefa e edição de vídeo.",
+    "preco": 1499.99,
+    "categoria": "Périférico",
+    "imagemUrl": "./images/monitor.jpg",
+    "disponibilidade": 999
+  },
+  {
+    "id": 5,
+    "nome": "Headset",
+    "descricao": "Headset Gamer HyperX Cloud II, som surround 7.1, microfone removível, estrutura em alumínio.",
+    "preco": 499.99,
+    "categoria": "Périférico",
+    "imagemUrl": "./images/headset.jpg",
+    "disponibilidade": 999
+  },
+  {
+    "id": 6,
+    "nome": "Impressora",
+    "descricao": "Impressora Multifuncional HP DeskJet 3776, com Wi-Fi, impressão, cópia e digitalização, compatível com smartphones e tablets.",
+    "preco": 399.99,
+    "categoria": "Escritorio",
+    "imagemUrl": "images/impressora.jpg",
+    "disponibilidade": 999
+  }
+]
