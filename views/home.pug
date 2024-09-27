@@ -2,18 +2,60 @@ extends layout
 
 block content
   .container
-    h1 Produtos Disponíveis
-    h3 Seja bem-vindes, #{user.email}
     .row
-      if produtos.length
-        each produto in produtos
+      h2.text-center Bem-vindo à nossa Loja!
+
+      // Seção de Promoções
+      if promocoes.length > 0
+        h3.text-center Promoções Ativas
+        .row
+          each promocao in promocoes
+            .col-md-4
+              .card
+                img.card-img-top(src=promocao.imagemUrl, alt=`Imagem de ${promocao.nome}`)
+                .card-body
+                  h5.card-title= promocao.nome
+                  p.card-text= promocao.descricao
+                  p Preço Original: R$ #{promocao.precoOriginal}
+                  p Preço Promocional: R$ #{promocao.precoPromocional}
+      else
+        h4.text-center Nenhuma promoção disponível no momento.
+
+      // Seção de Ordenação e Produtos
+      h3.text-center.mt-8 Nossos Produtos
+      hr
+      form(method='GET', action='/home')
+        .d-flex.justify-content-end.align-items-center
+          label(for='ordenar', class='mr-2') Ordenar por:
+          select.form-control.w-auto(name='ordenar', id='ordenar')
+            option(value='titulo', selected=(ordenacao === 'titulo')) Título
+            option(value='preco', selected=(ordenacao === 'preco')) Preço
+          button.btn.btn-secondary.ml-2(type='submit') Ordenar
+
+
+      .row
+        each produto, index in produtos
+          if index % 3 == 0
+            .row.mt-4
           .col-md-4
             .card.mb-4
               img.card-img-top(src=produto.imagemUrl || 'https://via.placeholder.com/150', alt=`Imagem de ${produto.nome}`)
               .card-body
                 h5.card-title= produto.nome
-                p.card-text Descrição: #{produto.descricao}
-                p.card-text Preço: R$ #{produto.preco}
-                a.btn.btn-primary(href=`/produto/${produto.id}?authToken=${authToken}`) Ver Detalhes
-      else
-        p Nenhum produto disponível no momento.
+                p.card-text= `R$${produto.preco}`
+                .d-grid.gap-2
+                  a.btn.btn-primary.btn-block(href=`/produto/${produto.id}`) Ver Detalhes
+                  if isAdmin
+                    a.btn.btn-warning.btn-block(href=`/produto/${produto.id}/editar`) Editar
+                    form(method='POST', action=`/produto/${produto.id}/deletar`)
+                      button.btn.btn-danger.btn-block(type='submit') Remover
+
+
+      // Exibir paginação
+      if paginas.length > 1
+        nav
+          ul.pagination
+            each pagina in paginas
+              li.page-item(class=(pagina === paginaAtual ? 'active' : ''))
+                a.page-link(href=`/produtos?page=${pagina}`)= pagina
+

@@ -33,7 +33,7 @@
     "preco": 499.99,
     "categoria": "Périférico",
     "imagemUrl": "./images/headset.jpg",
-    "disponibilidade": 999
+    "disponibilidade": "999"
   },
   {
     "id": 6,

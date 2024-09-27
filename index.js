@@ -11,7 +11,7 @@ admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
 });
 
-const uid = "8kwtLTa6jCca4Hq2ENKumTnnnHj1";
+const uid = "KdKjGLhGvOerqxEg4RiQMbOuHjx1";
 
 admin.auth().setCustomUserClaims(uid, { isAdmin: true })
   .then(() => {
@@ -23,13 +23,13 @@ admin.auth().setCustomUserClaims(uid, { isAdmin: true })
 
 
   const firebaseConfig = {
-    apiKey: "AIzaSyDP6lumK6qEfcJSLUYGupgW0x-mhfHHz54",
-    authDomain: "trabalho-automa.firebaseapp.com",
-    projectId: "trabalho-automa",
-    storageBucket: "trabalho-automa.appspot.com",
-    messagingSenderId: "908289836854",
-    appId: "1:908289836854:web:657afc84de830f81a95597",
-    measurementId: "G-J4NZD2LHZW"
+    apiKey: "AIzaSyC2PgxITpOoVWo06oNGBZzy0nn3AIRcMro",
+    authDomain: "wesleytechstore-1452a.firebaseapp.com",
+    projectId: "wesleytechstore-1452a",
+    storageBucket: "wesleytechstore-1452a.appspot.com",
+    messagingSenderId: "308723096223",
+    appId: "1:308723096223:web:8a1498fa3ee1258c9160aa",
+    measurementId: "G-C0B9B246XZ"
   };
 
 
@@ -53,12 +53,10 @@ app.use(
   }),
 );
 
-// Carregamento de dados do arquivo produtos.json
 const produtos = JSON.parse(
   fs.readFileSync(path.join(__dirname, "produtos.json")),
 );
 
-// Middleware para verificar se o usuário está autenticado
 const checkAuth = (req, res, next) => {
   if (req.session && req.session.user) {
     next();
@@ -68,9 +66,8 @@ const checkAuth = (req, res, next) => {
 };
 
 
-// Rota inicial de login
 app.get("/", (req, res) => {
-  res.render("login"); // Renderiza a página de login
+  res.render("login"); 
 });
 
 
@@ -81,13 +78,16 @@ app.post("/authenticated", async (req, res) => {
     const userCredential = await autenticador.signInWithEmailAndPassword(auth, email, password);
     const user = userCredential.user;
     const idToken = await user.getIdTokenResult();
-
-    req.session.user = {
+    
+     req.session.user = {
       uid: user.uid,
       email: user.email,
       token: idToken.token,
-      isAdmin: idToken.claims.isAdmin || false, 
+      isAdmin: idToken.claims.isAdmin || false,
     };
+    const promocoesPath = path.join(__dirname, 'promocoes.json');
+    const promocoes = JSON.parse(fs.readFileSync(promocoesPath, 'utf-8'));
+    req.session.promocoes = promocoes;
     res.redirect("/home");
   } catch (error) {
     console.error("Erro ao fazer login:", error);
@@ -132,30 +132,27 @@ app.post("/admin/cadastroAdmin", checkAuth, checkAdmin, async (req, res) => {
 });
 
 
-// Exibe o formulário para criar um novo administrador
+
 app.get("/admin/cadastroAdmin", checkAuth, checkAdmin, (req, res) => {
   res.render("create-admin");
 });
 
-const multer = require('multer'); // Adicione isso se estiver usando multer
+const multer = require('multer');
 
-// Configuração do Multer
+
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, './public/images'); // Altere para o diretório desejado
+    cb(null, './public/images');
   },
   filename: (req, file, cb) => {
-    cb(null, Date.now() + path.extname(file.originalname)); // Adiciona um timestamp ao nome do arquivo
+    cb(null, Date.now() + path.extname(file.originalname)); 
   },
 });
 
 const upload = multer({ storage: storage });
 
-// Rota para cadastrar produto
 app.post("/admin/cadastro/produto", checkAuth, checkAdmin, upload.single('foto'), (req, res) => {
   const { nome, descricao, preco, categoria } = req.body;
-
-  // Salva a URL da imagem
   const imagemUrl = req.file ? `./images/${req.file.filename}` : '';
 
   const novoProduto = {
@@ -174,7 +171,6 @@ app.post("/admin/cadastro/produto", checkAuth, checkAdmin, upload.single('foto')
   res.redirect('/home?msg=Produto cadastrado com sucesso!');
 });
 
-// Rota para exibir o formulário de cadastro de produtos
 app.get("/admin/cadastro/produto", checkAuth, checkAdmin, (req, res) => {
   res.render("cadastro", { user: req.session.user });
 });
@@ -185,38 +181,53 @@ app.get("/admin", checkAdmin,checkAdmin, (req, res) => {
   res.send("Bem-vindo à página de administrador!");
 });
 
-// Logout
 app.get("/logout", (req, res) => {
   req.session.destroy();
   res.render("login");
 });
 
-// Página inicial para usuários autenticados
 app.get("/home", checkAuth, (req, res) => {
-  res.render("home", {
-    produtos,
+  const paginaAtual = parseInt(req.query.page) || 1;
+  const produtosPorPagina = 20;
+  const ordenar = req.query.ordenar || 'titulo';
+  const produtosOrdenados = [...produtos].sort((a, b) => {
+    if (ordenar === 'preco') return a.preco - b.preco;
+    return a.nome.localeCompare(b.nome);
+  });
+  const inicio = (paginaAtual - 1) * produtosPorPagina;
+  const fim = inicio + produtosPorPagina;
+  const produtosPaginados = produtosOrdenados.slice(inicio, fim);
+
+  const totalPaginas = Math.ceil(produtosOrdenados.length / produtosPorPagina);
+  const paginas = Array.from({ length: totalPaginas }, (_, i) => i + 1);
+  const promocoes = req.session.promocoes || [];  
+  req.session.promocoes = promocoes;
+  res.render('home', {
+    produtos: produtosPaginados,
+    paginaAtual,
+    paginas,
+    promocoes,
     user: req.session.user,
-    isAdmin: req.session.user.isAdmin, // Use a propriedade da sessão
+    isAdmin: req.session.user.isAdmin
   });
 });
 
 
 app.get("/produto/:id", checkAuth, (req, res) => {
-  const id = parseInt(req.params.id); // Converte o ID para um número
-  if (isNaN(id)) return res.status(400).send("ID inválido"); // Verifica se o ID é um número válido
+  const id = parseInt(req.params.id); 
+  if (isNaN(id)) return res.status(400).send("ID inválido"); 
 
-  const produto = produtos.find((p) => p.id === id); // Busca o produto pelo ID
+  const produto = produtos.find((p) => p.id === id); 
   if (!produto) return res.status(404).send("Produto não encontrado");
 
   res.render("produto", {
     produto,
-    isAdmin: req.session.user.isAdmin, // Use a propriedade da sessão
-    user: req.session.user, // Mantenha o usuário
+    isAdmin: req.session.user.isAdmin, 
+    user: req.session.user,
   });
 });
 
 
-// Editar um produto (somente para administradores)
 app.get("/produto/:id/editar", checkAuth, (req, res) => {
   if (req.session.user.isAdmin) {
     const produto = produtos.find((p) => p.id === parseInt(req.params.id));
@@ -245,7 +256,6 @@ app.get("/admin/excluir/produto/:id", checkAuth, checkAdmin, (req, res) => {
 
 
 
-// Atualizar um produto (somente para administradores)
 app.post("/produto/:id/editar", checkAuth, (req, res) => {
   if (req.session.user.isAdmin) {
     const produto = produtos.find((p) => p.id === parseInt(req.params.id));
@@ -270,7 +280,6 @@ app.post("/produto/:id/editar", checkAuth, (req, res) => {
   }
 });
 
-// Página de compra
 app.get("/compra/:id", checkAuth,checkAdmin, (req, res) => {
   const produto = produtos.find((p) => p.id === parseInt(req.params.id));
   if (!produto) return res.status(404).send("Produto não encontrado");
@@ -282,7 +291,6 @@ app.get("/compra/:id", checkAuth,checkAdmin, (req, res) => {
   });
 });
 
-// Finalizar compra
 app.post("/finalizar-compra/:id", checkAuth, (req, res) => {
   const produto = produtos.find((p) => p.id === parseInt(req.params.id));
   if (!produto) return res.status(404).send("Produto não encontrado");
@@ -312,8 +320,94 @@ app.post("/finalizar-compra/:id", checkAuth, (req, res) => {
   });
 });
 
-// Iniciar o servidor
 const port = process.env.PORT || 3000;
 app.listen(port, () => {
   console.log(`Servidor rodando na porta ${port}`);
+});
+
+
+app.get('/admin/cadastro/promocao', checkAuth, checkAdmin, (req, res) => {
+  const promocoes = req.session.promocoes || []; 
+  res.render('admin-promocoes', {
+    promocoes: promocoes, 
+    user: req.session.user 
+  });
+});
+
+
+app.post('/admin/cadastro/promocao', checkAuth, checkAdmin, upload.single('media'), (req, res) => {
+  const { titulo, descricao, dataFim } = req.body;
+  const mediaUrl = req.file ? `/uploads/${req.file.filename}` : null;
+  const tipo = req.file.mimetype.startsWith('image') ? 'imagem' : 'video';
+
+  const novaPromocao = {
+    id: promocoes.length + 1,
+    titulo,
+    descricao,
+    mediaUrl,
+    tipo,
+    dataFim: dataFim || null
+  };
+
+  promocoes.push(novaPromocao);
+  fs.writeFileSync(path.join(__dirname, 'promocoes.json'), JSON.stringify(promocoes, null, 2));
+
+  res.redirect('/');
+});
+
+
+// Rota para exibir o formulário de edição da promoção
+app.get('/admin/promocoes/:id/editar', checkAuth, checkAdmin, (req, res) => {
+  const promocaoId = parseInt(req.params.id);
+  
+  // Carregar promoções do arquivo JSON
+  const promocoesPath = path.join(__dirname, 'promocoes.json');
+  const promocoes = JSON.parse(fs.readFileSync(promocoesPath, 'utf-8'));
+
+  // Encontrar a promoção pelo ID
+  const promocao = promocoes.find(p => p.id === promocaoId);
+
+  if (!promocao) {
+    return res.status(404).send('Promoção não encontrada.');
+  }
+
+  // Renderiza a página de edição com os dados da promoção
+  res.render('editar-promocao', { promocao });
+});
+
+// Rota para processar a edição da promoção
+app.post('/admin/promocoes/:id/editar', checkAuth, checkAdmin, upload.single('media'), (req, res) => {
+  const promocaoId = parseInt(req.params.id);
+  
+  // Carregar promoções do arquivo JSON
+  const promocoesPath = path.join(__dirname, 'promocoes.json');
+  const promocoes = JSON.parse(fs.readFileSync(promocoesPath, 'utf-8'));
+
+  // Encontrar a promoção pelo ID
+  const promocaoIndex = promocoes.findIndex(p => p.id === promocaoId);
+
+  if (promocaoIndex === -1) {
+    return res.status(404).send('Promoção não encontrada.');
+  }
+
+  // Atualizar os dados da promoção
+  const { titulo, descricao, dataFim } = req.body;
+  const mediaUrl = req.file ? `/uploads/${req.file.filename}` : promocoes[promocaoIndex].mediaUrl; // Mantém a mídia original se nenhuma nova for enviada
+  const tipo = req.file ? (req.file.mimetype.startsWith('image') ? 'imagem' : 'video') : promocoes[promocaoIndex].tipo;
+
+  // Atualizando a promoção
+  promocoes[promocaoIndex] = {
+    ...promocoes[promocaoIndex],  // Mantém os dados antigos
+    titulo,
+    descricao,
+    mediaUrl,
+    tipo,
+    dataFim: dataFim || promocoes[promocaoIndex].dataFim  // Se a dataFim não for fornecida, mantém a anterior
+  };
+
+  // Salvar as promoções atualizadas no arquivo JSON
+  fs.writeFileSync(promocoesPath, JSON.stringify(promocoes, null, 2));
+
+  // Redirecionar de volta para a página de promoções ou home
+  res.redirect('/home?msg=Promoção editada com sucesso!');
 });

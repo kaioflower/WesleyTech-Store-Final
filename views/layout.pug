@@ -16,15 +16,17 @@ html(lang="pt-br")
   body
     header
       nav.navbar.navbar-expand-lg.navbar-light.bg-light
-        a.navbar-brand(href='/home') Home
+        a.navbar-brand(href='/home') WesleyTech Store
         button.navbar-toggler(type='button', data-toggle='collapse', data-target='#navbarNav', aria-controls='navbarNav', aria-expanded='false', aria-label='Toggle navigation')
           span.navbar-toggler-icon
         #navbarNav.collapse.navbar-collapse
           ul.navbar-nav
             if user 
               li.nav-item
-                a.nav-link(href=`/home?authToken=${authToken}`) Home
+                a.nav-link(href='/home') Home
               if user.isAdmin
+                li.nav-item
+                  a.nav-link(href='/admin/cadastro/promocao') Cadastrar Promoções
                 li.nav-item
                   a.nav-link(href='/admin/cadastro/produto') Cadastrar Produto
                 li.nav-item
