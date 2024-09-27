@@ -1,27 +1,26 @@
 [
-    {
-      "id": 1,
-      "titulo": "Desconto de 50% em Fones de Ouvido",
-      "descricao": "Aproveite 50% de desconto nos melhores fones de ouvido até o final do mês!",
-      "mediaUrl": "./images/PromoFone.png",
-      "tipo": "imagem",
-      "dataFim": "2024-10-31"
-    },
-    {
-      "id": 2,
-      "titulo": "Promoção de Laptops com Frete Grátis",
-      "descricao": "Compre qualquer laptop da nossa linha e ganhe frete grátis para todo o Brasil!",
-      "mediaUrl": "./public/images/PromoNot.jpg",
-      "tipo": "video",
-      "dataFim": "2024-12-31"
-    },
-    {
-      "id": 3,
-      "titulo": "Black Friday: 70% de desconto em toda a loja!",
-      "descricao": "Nossa maior promoção do ano! 70% de desconto em todos os produtos por tempo limitado.",
-      "mediaUrl": "./images/black_friday.jpg",
-      "tipo": "imagem",
-      "dataFim": "2024-11-25"
-    }
-  ]
-  
+  {
+    "id": 1,
+    "titulo": "Desconto de 45% em Fones de Ouvido",
+    "descricao": "Aproveite 45% de desconto nos melhores fones de ouvido até o final do mês!",
+    "imagemUrl": "./images/PromoFone.png",
+    "tipo": "imagem",
+    "dataFim": "2024-10-31"
+  },
+  {
+    "id": 2,
+    "titulo": "Promoção de Laptops com Frete Grátis",
+    "descricao": "Compre qualquer laptop da nossa linha e ganhe frete grátis para todo o Brasil!",
+    "imagemUrl": "./images/PromoNot.jpg",
+    "tipo": "video",
+    "dataFim": "2024-12-31"
+  },
+  {
+    "id": 3,
+    "titulo": "Black Friday: 70% de desconto em toda a loja!",
+    "descricao": "Nossa maior promoção do ano! 50% de desconto em varios produtos",
+    "imagemUrl": "./images/Promo.jpg",
+    "tipo": "imagem",
+    "dataFim": "2024-11-25"
+  }
+]

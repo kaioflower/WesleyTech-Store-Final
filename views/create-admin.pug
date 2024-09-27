@@ -3,7 +3,7 @@ extends layout
 block content
   .container
     h1 Criar Novo Administrador
-    form(method="POST" action="/admin/create")
+    form(method="POST" action="/admin/cadastroAdmin")
       .form-group
         label(for="email") E-mail
         input#email.form-control(type="email" name="email" required)

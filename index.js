@@ -32,8 +32,6 @@ admin.auth().setCustomUserClaims(uid, { isAdmin: true })
     measurementId: "G-C0B9B246XZ"
   };
 
-
-
 const appFireBase = iniciacaoApp.initializeApp(firebaseConfig);
 const auth = autenticador.getAuth(appFireBase);
 const app = express();
@@ -69,8 +67,6 @@ const checkAuth = (req, res, next) => {
 app.get("/", (req, res) => {
   res.render("login"); 
 });
-
-
 
 app.post("/authenticated", async (req, res) => {
   const { email, password } = req.body;
@@ -114,7 +110,6 @@ const checkAdmin = async (req, res, next) => {
   }
 };
 
-
 app.post("/admin/cadastroAdmin", checkAuth, checkAdmin, async (req, res) => {
   const { email, password } = req.body;
 
@@ -131,10 +126,28 @@ app.post("/admin/cadastroAdmin", checkAuth, checkAdmin, async (req, res) => {
   }
 });
 
-
-
 app.get("/admin/cadastroAdmin", checkAuth, checkAdmin, (req, res) => {
-  res.render("create-admin");
+  res.render("create-admin", {user: req.session.user});
+});
+
+app.post("/cadastroCliente", async (req, res) => {
+  const { email, password } = req.body;
+
+  try {
+    const userRecord = await admin.auth().createUser({
+      email,
+      password,
+    });
+    await admin.auth().setCustomUserClaims(userRecord.uid, { isAdmin: false });
+    res.redirect('/?msg=Usuário criado com sucesso!');
+  } catch (error) {
+    console.error("Erro ao realizar Cadastro:", error);
+    res.status(500).send("Erro ao realizar Cadastro");
+  }
+});
+
+app.get("/cadastroCliente", (req, res) => {
+  res.render("cadastro-cliente");
 });
 
 const multer = require('multer');
@@ -242,15 +255,15 @@ app.get("/produto/:id/editar", checkAuth, (req, res) => {
 });
 
 app.get("/admin/excluir/produto/:id", checkAuth, checkAdmin, (req, res) => {
-  const produtoId = parseInt(req.params.id); // Pega o ID do produto a ser excluído
-  const index = produtos.findIndex(produto => produto.id === produtoId); // Localiza o índice do produto
+  const produtoId = parseInt(req.params.id); 
+  const index = produtos.findIndex(produto => produto.id === produtoId); 
 
   if (index !== -1) {
-    produtos.splice(index, 1); // Remove o produto do array
-    fs.writeFileSync(path.join(__dirname, "produtos.json"), JSON.stringify(produtos, null, 2)); // Atualiza o JSON
-    res.redirect('/home?msg=Produto excluído com sucesso!'); // Redireciona após a exclusão
+    produtos.splice(index, 1); 
+    fs.writeFileSync(path.join(__dirname, "produtos.json"), JSON.stringify(produtos, null, 2));
+    res.redirect('/home?msg=Produto excluído com sucesso!'); 
   } else {
-    res.status(404).send("Produto não encontrado"); // Caso não encontre o produto
+    res.status(404).send("Produto não encontrado"); 
   }
 });
 
@@ -320,13 +333,7 @@ app.post("/finalizar-compra/:id", checkAuth, (req, res) => {
   });
 });
 
-const port = process.env.PORT || 3000;
-app.listen(port, () => {
-  console.log(`Servidor rodando na porta ${port}`);
-});
-
-
-app.get('/admin/cadastro/promocao', checkAuth, checkAdmin, (req, res) => {
+app.get('/admin/promocao', checkAuth, checkAdmin, (req, res) => {
   const promocoes = req.session.promocoes || []; 
   res.render('admin-promocoes', {
     promocoes: promocoes, 
@@ -335,7 +342,7 @@ app.get('/admin/cadastro/promocao', checkAuth, checkAdmin, (req, res) => {
 });
 
 
-app.post('/admin/cadastro/promocao', checkAuth, checkAdmin, upload.single('media'), (req, res) => {
+app.post('/admin/promocao', checkAuth, checkAdmin, upload.single('media'), (req, res) => {
   const { titulo, descricao, dataFim } = req.body;
   const mediaUrl = req.file ? `/uploads/${req.file.filename}` : null;
   const tipo = req.file.mimetype.startsWith('image') ? 'imagem' : 'video';
@@ -356,58 +363,98 @@ app.post('/admin/cadastro/promocao', checkAuth, checkAdmin, upload.single('media
 });
 
 
-// Rota para exibir o formulário de edição da promoção
 app.get('/admin/promocoes/:id/editar', checkAuth, checkAdmin, (req, res) => {
   const promocaoId = parseInt(req.params.id);
-  
-  // Carregar promoções do arquivo JSON
   const promocoesPath = path.join(__dirname, 'promocoes.json');
   const promocoes = JSON.parse(fs.readFileSync(promocoesPath, 'utf-8'));
-
-  // Encontrar a promoção pelo ID
-  const promocao = promocoes.find(p => p.id === promocaoId);
+  const promocao = promocoes.find(p => parseInt(p.id) === promocaoId);
 
   if (!promocao) {
     return res.status(404).send('Promoção não encontrada.');
   }
 
-  // Renderiza a página de edição com os dados da promoção
   res.render('editar-promocao', { promocao });
 });
 
-// Rota para processar a edição da promoção
+
+
 app.post('/admin/promocoes/:id/editar', checkAuth, checkAdmin, upload.single('media'), (req, res) => {
-  const promocaoId = parseInt(req.params.id);
-  
-  // Carregar promoções do arquivo JSON
+  const promocaoId = parseInt(req.params.id); 
   const promocoesPath = path.join(__dirname, 'promocoes.json');
   const promocoes = JSON.parse(fs.readFileSync(promocoesPath, 'utf-8'));
 
-  // Encontrar a promoção pelo ID
-  const promocaoIndex = promocoes.findIndex(p => p.id === promocaoId);
+  const promocaoIndex = promocoes.findIndex(p => parseInt(p.id) === promocaoId);
 
   if (promocaoIndex === -1) {
     return res.status(404).send('Promoção não encontrada.');
   }
 
-  // Atualizar os dados da promoção
   const { titulo, descricao, dataFim } = req.body;
-  const mediaUrl = req.file ? `/uploads/${req.file.filename}` : promocoes[promocaoIndex].mediaUrl; // Mantém a mídia original se nenhuma nova for enviada
+
+  const mediaUrl = req.file ? `/uploads/${req.file.filename}` : promocoes[promocaoIndex].mediaUrl;
   const tipo = req.file ? (req.file.mimetype.startsWith('image') ? 'imagem' : 'video') : promocoes[promocaoIndex].tipo;
 
-  // Atualizando a promoção
   promocoes[promocaoIndex] = {
-    ...promocoes[promocaoIndex],  // Mantém os dados antigos
+    ...promocoes[promocaoIndex], 
     titulo,
     descricao,
     mediaUrl,
     tipo,
-    dataFim: dataFim || promocoes[promocaoIndex].dataFim  // Se a dataFim não for fornecida, mantém a anterior
+    dataFim: dataFim || promocoes[promocaoIndex].dataFim  
   };
 
-  // Salvar as promoções atualizadas no arquivo JSON
   fs.writeFileSync(promocoesPath, JSON.stringify(promocoes, null, 2));
 
-  // Redirecionar de volta para a página de promoções ou home
   res.redirect('/home?msg=Promoção editada com sucesso!');
 });
+
+
+app.get('/admin/cadastro/promocao', checkAuth, checkAdmin, (req, res) => {
+  res.render('cadastro-promocao', { user: req.session.user });
+});
+
+app.post('/admin/cadastro/promocao', checkAuth, checkAdmin, upload.single('media'), (req, res) => {
+  const { titulo, descricao, dataFim } = req.body;
+  const mediaUrl = req.file ? `/uploads/${req.file.filename}` : null;
+  const tipo = req.file ? (req.file.mimetype.startsWith('image') ? 'imagem' : 'video') : null;
+
+  const promocoesPath = path.join(__dirname, 'promocoes.json');
+  const promocoes = JSON.parse(fs.readFileSync(promocoesPath, 'utf-8'));
+
+  const novaPromocao = {
+    id: promocoes.length + 1,
+    titulo,
+    descricao,
+    mediaUrl,
+    tipo,
+    dataFim: dataFim || null
+  };
+
+  promocoes.push(novaPromocao);
+  fs.writeFileSync(promocoesPath, JSON.stringify(promocoes, null, 2));
+
+  res.redirect('/home?msg=Promoção criada com sucesso!');
+});
+
+app.post("/admin/promocoes/:id/deletar", checkAuth, checkAdmin, (req, res) => {
+  const promocaoId = parseInt(req.params.id); 
+  const promocoesPath = path.join(__dirname, 'promocoes.json');
+  const promocoes = JSON.parse(fs.readFileSync(promocoesPath, 'utf-8')) || []; 
+
+  const index = promocoes.findIndex(promocao => promocao.id === promocaoId); 
+
+  if (index !== -1) {
+    promocoes.splice(index, 1); 
+    fs.writeFileSync(promocoesPath, JSON.stringify(promocoes, null, 2)); 
+    res.redirect('/home?msg=Promoção excluída com sucesso!'); 
+  } else {
+    res.status(404).send("Promoção não encontrada"); 
+  }
+});
+
+const port = process.env.PORT || 3000;
+app.listen(port, () => {
+  console.log(`Servidor rodando na porta ${port}`);
+});
+
+

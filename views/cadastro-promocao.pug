@@ -1,0 +1,26 @@
+extends layout
+
+block content
+  .container
+    .row.justify-content-center
+      .col-md-6
+        h2.text-center Cadastrar Promoção
+
+        form(action="/admin/cadastro/promocao" method="POST" enctype="multipart/form-data")
+          .form-group
+            label(for="titulo") Título
+            input#titulo.form-control(type="text" name="titulo" required)
+
+          .form-group
+            label(for="descricao") Descrição
+            textarea#descricao.form-control(name="descricao" required)
+
+          .form-group
+            label(for="media") Imagem 
+            input#media.form-control(type="file" name="media" accept="image/*")
+
+          .form-group
+            label(for="dataFim") Data de Fim da Promoção
+            input#dataFim.form-control(type="date" name="dataFim")
+
+          button.btn.btn-primary.btn-block(type='submit') Cadastrar Promoção

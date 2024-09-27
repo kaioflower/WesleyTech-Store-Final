@@ -1,0 +1,21 @@
+extends layout
+
+block content
+  .container
+    .row.justify-content-center
+      .col-md-6
+        h2.text-center Cadastro
+        form(method='POST', action='/cadastroCliente')
+          .form-group
+            label(for='nome') Nome
+            input.form-control(type='text', id='nome', name='nome', placeholder='Digite seu nome', required)
+          .form-group
+            label(for='email') E-mail
+            input.form-control(type='email', id='email', name='email', placeholder='Digite seu e-mail', required)
+          .form-group
+            label(for='password') Senha
+            input.form-control(type='password', id='password', name='password', placeholder='Digite sua senha', required)
+          .form-group
+            label(for='confirmPassword') Confirme sua Senha
+            input.form-control(type='password', id='confirmPassword', name='confirmPassword', placeholder='Confirme sua senha', required)
+          button.btn.btn-success.btn-block(type='submit') Cadastrar

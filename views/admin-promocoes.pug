@@ -2,23 +2,18 @@ extends layout
 
 block content
   .container
-    h2.text-center Promoções Cadastradas
+    .d-flex.justify-content-between.mb-4
+      h2 Promoções Cadastradas
+      a.btn.btn-success(href='/admin/cadastro/promocao') + Nova Promoção
 
     .row
       each promocao in promocoes
         .col-md-4
-          .card.mb-4
-            if promocao.tipo === 'imagem'
-              img.card-img-top(src=promocao.mediaUrl, alt=`Promoção: ${promocao.titulo}`)
-            else if promocao.tipo === 'video'
-              video.card-img-top(controls)
-                source(src=promocao.mediaUrl, type='video/mp4')
-                Your browser does not support the video tag.
+          .card.mb-4   
+            img.card-img-top(src=`/${promocao.imagemUrl}`, alt=`Imagem de ${promocao.nome}`)
             .card-body
               h5.card-title= promocao.titulo
               p.card-text= promocao.descricao
-              if promocao.dataFim
-                small.text-muted Expira em #{promocao.dataFim}
-              a.btn.btn-warning(href=`/admin/promocoes/${promocao.id}/editar`) Editar
+              a.btn.btn-warning.btn-block(href=`/admin/promocoes/${promocao.id}/editar`) Editar
               form(method='POST', action=`/admin/promocoes/${promocao.id}/deletar`)
-                button.btn.btn-danger(type='submit') Remover
+                button.btn.btn-danger.btn-block(type='submit') Remover

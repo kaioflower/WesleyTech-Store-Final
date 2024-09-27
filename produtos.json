@@ -43,5 +43,14 @@
     "categoria": "Escritorio",
     "imagemUrl": "images/impressora.jpg",
     "disponibilidade": 999
+  },
+  {
+    "id": 6,
+    "nome": "Cadeira gamer",
+    "descricao": "Cadeira extremamente confortavel.",
+    "preco": 450,
+    "categoria": "Gamer",
+    "imagemUrl": "./images/1727452248900.webp",
+    "disponibilidade": 999
   }
 ]

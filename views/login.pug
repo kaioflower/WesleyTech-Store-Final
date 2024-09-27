@@ -14,9 +14,13 @@ block content
             input.form-control(type='password', id='password', name='password', placeholder='Digite sua senha', required)
           button.btn.btn-primary.btn-block(type='submit') Entrar
         p#login-message
+
+        // Novo botão de cadastro
+        p.text-center
+          a.btn.btn-secondary(href='/cadastroCliente') Cadastre-se
+
   script.
     document.getElementById("loginForm").addEventListener("submit", function(event) {
-      // Não precisa de preventDefault aqui, o formulário será enviado normalmente
       const email = document.getElementById("email").value;
       const password = document.getElementById("password").value;
 
@@ -30,7 +34,7 @@ block content
       .then(response => {
         if (!response.ok) {
           return response.text().then(message => {
-            document.getElementById('login-message').innerText = message; // Exibir mensagem de erro
+            document.getElementById('login-message').innerText = message; 
           });
         }
       })

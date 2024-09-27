@@ -26,16 +26,13 @@ html(lang="pt-br")
                 a.nav-link(href='/home') Home
               if user.isAdmin
                 li.nav-item
-                  a.nav-link(href='/admin/cadastro/promocao') Cadastrar Promoções
+                  a.nav-link(href='/admin/promocao') Promoções
                 li.nav-item
                   a.nav-link(href='/admin/cadastro/produto') Cadastrar Produto
                 li.nav-item
                   a.nav-link(href='/admin/cadastroAdmin') Adicionar Administrador
               li.nav-item
                 a.nav-link(href='/logout') Sair
-            else
-              li.nav-item
-                a.nav-link(href='/login') Login
 
     main
       block content
